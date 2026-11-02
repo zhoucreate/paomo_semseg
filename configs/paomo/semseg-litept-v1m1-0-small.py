@@ -17,7 +17,7 @@ model = dict(
     backbone_out_channels=72,
     backbone=dict(
         type="LitePT-v1",
-        in_channels=3,
+        in_channels=6,
         order=("z", "z-trans", "hilbert", "hilbert-trans"),
         stride=(2, 2, 2, 2),
         enc_depths=(2, 2, 2, 6, 2),
@@ -88,9 +88,9 @@ data = dict(
             dict(type="RandomFlip", p=0.5),
             dict(type="RandomJitter", sigma=0.005, clip=0.02),
             # dict(type="ElasticDistortion", distortion_params=[[0.2, 0.4], [0.8, 1.6]]),
-            # dict(type="ChromaticAutoContrast", p=0.2, blend_factor=None),
-            # dict(type="ChromaticTranslation", p=0.95, ratio=0.05),
-            # dict(type="ChromaticJitter", p=0.95, std=0.05),
+            dict(type="ChromaticAutoContrast", p=0.2, blend_factor=None),
+            dict(type="ChromaticTranslation", p=0.95, ratio=0.05),
+            dict(type="ChromaticJitter", p=0.95, std=0.05),
             dict(
                 type="GridSample",
                 grid_size=0.10,
@@ -100,13 +100,13 @@ data = dict(
             ),
             dict(type="SphereCrop", point_max=102400, mode="random"),
             dict(type="CenterShift", apply_z=False),
-            # dict(type="NormalizeColor"),
+            dict(type="NormalizeColor"),
             dict(type="ToTensor"),
             dict(type="Update", keys_dict={"grid_size": 0.10}),
             dict(
                 type="Collect",
                 keys=("coord", "grid_coord", "segment", "grid_size"),
-                feat_keys=("coord",),
+                feat_keys=('color', 'normal'),
             ),
         ],
         test_mode=False,
@@ -127,12 +127,12 @@ data = dict(
                 return_inverse=True,
             ),
             dict(type="CenterShift", apply_z=False),
-            # dict(type="NormalizeColor"),
+            dict(type="NormalizeColor"),
             dict(type="ToTensor"),
             dict(
                 type="Collect",
                 keys=("coord", "grid_coord", "segment", "origin_segment", "inverse"),
-                feat_keys=("coord",),
+                feat_keys=('color', 'normal'),
             ),
         ],
         test_mode=False,
@@ -143,7 +143,7 @@ data = dict(
         data_root=data_root,
         transform=[
             dict(type="CenterShift", apply_z=True),
-            # dict(type="NormalizeColor"),
+            dict(type="NormalizeColor"),
         ],
         test_mode=True,
         test_cfg=dict(
@@ -161,7 +161,7 @@ data = dict(
                 dict(
                     type="Collect",
                     keys=("coord", "grid_coord", "index"),
-                    feat_keys=("coord",),
+                    feat_keys=('color', 'normal'),
                 ),
             ],
             aug_transform=[
