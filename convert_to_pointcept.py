@@ -197,15 +197,6 @@ def report(split, stats):
     print(f"scenes w/o color  : {stats['no_color']} (filled with gray 127)")
     print(f"scenes w/o normal : {stats['no_normal']} (filled with zeros)")
     print(f"bbox diagonal     : median {np.median(stats['bbox_diags']):.4f}")
-    if stats["nn_dists"]:
-        nn = float(np.mean(stats["nn_dists"]))
-        print(f"mean NN distance  : {nn:.6f} (estimated on "
-              f"{len(stats['nn_dists'])} scenes)")
-        print(f"suggested grid_size: ~{4 * nn:.6f} (4x NN distance); set it in "
-              f"the config's GridSample transforms and test_cfg.voxelize")
-    print(f"suggested CE class weight: [1.0, "
-          f"{(stats['points'] - stats['trim']) / max(stats['trim'], 1):.1f}] "
-          f"(neg/pos ratio)")
 
 
 if __name__ == "__main__":
